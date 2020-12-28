@@ -18,12 +18,20 @@ randomAmount customer = do
     bal <- readMVar (balance customer)
     if bal < 10 then return $ toRational 0
     else do
-        let amount = randomRIO (10 :: Double, fromRational bal :: Double)
-        random <- (amount :: IO Double)
-        let randomValue = dpRound 2 (toRational random) 
-        if bal < randomValue then 
-            randomAmount customer
-        else return randomValue
+        if fromRational bal <= 50 then do
+            let amount = randomRIO (10 :: Double, fromRational bal :: Double)
+            random <- (amount :: IO Double)
+            let randomValue = dpRound 2 (toRational random) 
+            if bal < randomValue then 
+                randomAmount customer
+            else return randomValue
+        else do
+            let amount = randomRIO (10 :: Double, 50 :: Double)
+            random <- (amount :: IO Double)
+            let randomValue = dpRound 2 (toRational random) 
+            if bal < randomValue then 
+                randomAmount customer
+            else return randomValue
 
 -- | Returns a random customer from the a list of 10 customers taken as input.
 randomCustomer :: [Customer] -> IO Customer
@@ -51,6 +59,6 @@ randomCustomer customers = do
         return $ last customers
 
 
--- | Returns a random number corresponding to a time delay between 0.1s and 0.2s.
+-- | Returns a random number corresponding to a time delay between 0.01s and 0.02s.
 randomTime :: IO Int
-randomTime = randomRIO (100000, 200000)
+randomTime = randomRIO (10000, 20000)
